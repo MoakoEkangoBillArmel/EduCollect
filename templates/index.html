@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Nouvelle collecte{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-custom p-4">
+            <h2 class="text-center mb-4"><i class="fas fa-clipboard-list text-accent"></i> Enregistrer une observation</h2>
+            <form action="{{ url_for('submit') }}" method="POST">
+                <!-- Nom du village -->
+                <div class="mb-3">
+                    <label class="form-label">Nom du village</label>
+                    <input type="text" name="village" class="form-control" placeholder="Ex: Nkolbisson" required>
+                </div>
+                <!-- Coordonnées GPS -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Latitude</label>
+                        <input type="number" step="any" name="latitude" class="form-control" placeholder="Ex: 3.8667" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Longitude</label>
+                        <input type="number" step="any" name="longitude" class="form-control" placeholder="Ex: 11.5167" required>
+                    </div>
+                </div>
+                <!-- Accès à l'eau -->
+                <div class="mb-3">
+                    <label class="form-label">Accès à l'eau potable</label>
+                    <select name="water_access" class="form-select" required>
+                        <option value="">-- Choisir --</option>
+                        <option value="Oui">Oui</option>
+                        <option value="Non">Non</option>
+                    </select>
+                </div>
+                <!-- Électricité -->
+                <div class="mb-3">
+                    <label class="form-label">Accès à l'électricité</label>
+                    <select name="electricity_access" class="form-select" required>
+                        <option value="">-- Choisir --</option>
+                        <option value="Oui">Oui</option>
+                        <option value="Non">Non</option>
+                    </select>
+                </div>
+                <!-- Internet -->
+                <div class="mb-3">
+                    <label class="form-label">Accès à Internet</label>
+                    <select name="internet_access" class="form-select" required>
+                        <option value="">-- Choisir --</option>
+                        <option value="Oui">Oui</option>
+                        <option value="Non">Non</option>
+                    </select>
+                </div>
+                <!-- Qualité de l'école -->
+                <div class="mb-3">
+                    <label class="form-label">Qualité de l'école (1 = très faible, 5 = excellente)</label>
+                    <input type="range" class="form-range" name="school_quality" min="1" max="5" step="1" id="qualityRange" value="3">
+                    <div class="d-flex justify-content-between">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                    </div>
+                </div>
+                <!-- Commentaire -->
+                <div class="mb-4">
+                    <label class="form-label">Commentaire (optionnel)</label>
+                    <textarea name="comment" class="form-control" rows="2" placeholder="Observation libre..."></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-accent btn-lg">
+                        <i class="fas fa-save me-2"></i>Enregistrer les données
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

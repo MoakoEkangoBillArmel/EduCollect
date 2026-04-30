@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Carte des données{% endblock %}
+{% block extra_head %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+    #map { height: 600px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+</style>
+{% endblock %}
+{% block content %}
+<h1 class="mb-4 text-center"><i class="fas fa-map-marked-alt me-2"></i>Carte des relevés</h1>
+<div class="card card-custom p-2">
+    <div id="map"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    // Initialisation de la carte centrée sur le Cameroun (Yaoundé environ)
+    const map = L.map('map').setView([3.8667, 11.5167], 7);
+
+    // Fond de carte OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Données passées par Flask
+    const points = {{ points | tojson }};
+
+    // Pour chaque point, on ajoute un marqueur avec popup
+    points.forEach(p => {
+        const marker = L.marker([p.latitude, p.longitude]).addTo(map);
+        const popupContent = `
+            <b>${p.village}</b><br>
+            Eau : ${p.water_access} | Électricité : ${p.electricity_access}<br>
+            Internet : ${p.internet_access} | École : ${p.school_quality}/5<br>
+            <small>${p.comment || ''}</small>
+        `;
+        marker.bindPopup(popupContent);
+    });
+
+    // Si aucun point, on garde juste la carte vierge
+    if (points.length > 0) {
+        // Ajuster la vue pour englober tous les points
+        const group = new L.featureGroup(points.map(p => L.marker([p.latitude, p.longitude])));
+        map.fitBounds(group.getBounds().pad(0.1));
+    }
+</script>
+{% endblock %}

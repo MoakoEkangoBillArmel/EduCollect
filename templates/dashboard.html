@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord{% endblock %}
+{% block extra_head %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<h1 class="mb-4 text-center"><i class="fas fa-tachometer-alt me-2"></i>Tableau de bord analytique</h1>
+
+<!-- Cartes statistiques -->
+<div class="row text-center mb-5">
+    <div class="col-md-3 mb-3">
+        <div class="card card-custom p-3 bg-primary text-white">
+            <i class="fas fa-database fa-2x mb-2"></i>
+            <h4>{{ stats.total }}</h4>
+            <small>Enquêtes réalisées</small>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-custom p-3 bg-success text-white">
+            <i class="fas fa-school fa-2x mb-2"></i>
+            <h4>{{ stats.moyenne_qualite }}</h4>
+            <small>Note moyenne école (1-5)</small>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-custom p-3 bg-info text-white">
+            <i class="fas fa-water fa-2x mb-2"></i>
+            <h4>{{ stats.pourcent_eau }}%</h4>
+            <small>Accès à l'eau</small>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-custom p-3 bg-warning text-dark">
+            <i class="fas fa-bolt fa-2x mb-2"></i>
+            <h4>{{ stats.pourcent_electricite }}%</h4>
+            <small>Accès à l'électricité</small>
+        </div>
+    </div>
+</div>
+
+<!-- Graphiques -->
+<div class="row">
+    <!-- Histogramme qualité de l'école -->
+    <div class="col-lg-6 mb-4">
+        <div class="card card-custom p-4">
+            <h5 class="text-center">Distribution des notes de qualité d'école</h5>
+            <canvas id="histoQualite" height="200"></canvas>
+        </div>
+    </div>
+    <!-- Camembert accès Internet -->
+    <div class="col-lg-6 mb-4">
+        <div class="card card-custom p-4">
+            <h5 class="text-center">Accès à Internet</h5>
+            <canvas id="pieInternet" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Camembert Eau -->
+    <div class="col-md-6 mb-4">
+        <div class="card card-custom p-4">
+            <h5 class="text-center">Accès à l'eau potable</h5>
+            <canvas id="pieEau" height="180"></canvas>
+        </div>
+    </div>
+    <!-- Camembert Électricité -->
+    <div class="col-md-6 mb-4">
+        <div class="card card-custom p-4">
+            <h5 class="text-center">Accès à l'électricité</h5>
+            <canvas id="pieElec" height="180"></canvas>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+    // Histogramme qualité école
+    const ctxHisto = document.getElementById('histoQualite').getContext('2d');
+    new Chart(ctxHisto, {
+        type: 'bar',
+        data: {
+            labels: {{ chart_labels | tojson }},
+            datasets: [{
+                label: 'Nombre de villages',
+                data: {{ chart_data | tojson }},
+                backgroundColor: '#2c3e50',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+
+    // Camembert Internet (à partir des pourcentages déjà calculés)
+    const internetPourcent = {{ stats.pourcent_internet }};
+    new Chart(document.getElementById('pieInternet'), {
+        type: 'pie',
+        data: {
+            labels: ['Oui', 'Non'],
+            datasets: [{
+                data: [internetPourcent, 100 - internetPourcent],
+                backgroundColor: ['#18bc9c', '#ecf0f1'],
+                borderColor: 'white',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // Eau
+    const eauPourcent = {{ stats.pourcent_eau }};
+    new Chart(document.getElementById('pieEau'), {
+        type: 'pie',
+        data: {
+            labels: ['Oui', 'Non'],
+            datasets: [{
+                data: [eauPourcent, 100 - eauPourcent],
+                backgroundColor: ['#3498db', '#ecf0f1'],
+                borderColor: 'white',
+                borderWidth: 2
+            }]
+        }
+    });
+
+    // Électricité
+    const elecPourcent = {{ stats.pourcent_electricite }};
+    new Chart(document.getElementById('pieElec'), {
+        type: 'pie',
+        data: {
+            labels: ['Oui', 'Non'],
+            datasets: [{
+                data: [elecPourcent, 100 - elecPourcent],
+                backgroundColor: ['#f1c40f', '#ecf0f1'],
+                borderColor: 'white',
+                borderWidth: 2
+            }]
+        }
+    });
+</script>
+{% endblock %}

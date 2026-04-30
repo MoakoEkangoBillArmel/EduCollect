@@ -103,7 +103,7 @@ Votre application est accessible à :
 ---
 
 ## 👤 Auteur
-**MOAKO EKANGO BILL ARMEL**
+**MELI TAZO ANNAICE & MOAKO EKANGO BILL ARMEL**
 
 ## 📄 Licence
 MIT

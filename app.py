@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+import os
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 import statistics
 from datetime import datetime
 
 app = Flask(__name__)
-DATABASE = 'educollect.db'
+# Chemin absolu vers la BD (nécessaire pour PythonAnywhere)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE = os.path.join(BASE_DIR, 'educollect.db')
 
 def get_db():
     """Retourne une connexion à la base de données SQLite."""
